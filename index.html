@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#f8fafc">
+    <title>GK SSC - Fundamental Rights (Part II) - Polity 5.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-main: #f8fafc; --bg-card: #ffffff; --primary: #2563eb; --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff; --text-dark: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0;
+            --green: #10b981; --green-light: #ecfdf5; --red: #ef4444; --red-light: #fef2f2;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-main); color: var(--text-dark); min-height: 100dvh; font-size: 15px; line-height: 1.5; overflow-x: hidden; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+        .hidden { display: none !important; }
+        .start-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .start-card { width: 100%; max-width: 440px; background: var(--bg-card); border-radius: 24px; padding: 36px 28px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .brand-icon { width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px; }
+        .start-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .start-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        .mode-btn { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 16px; text-align: left; margin-bottom: 12px; transition: all 0.2s ease; }
+        .mode-btn:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); }
+        .mode-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .mode-icon.quiz { background: #dbeafe; color: #2563eb; }
+        .mode-icon.test { background: #d1fae5; color: #059669; }
+        .mode-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .mode-info-txt { font-size: 12px; color: var(--text-muted); }
+        .mode-arrow { margin-left: auto; color: var(--text-muted); font-size: 14px; }
+        .quiz-app { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        .quiz-header { flex-shrink: 0; background: #fff; border-bottom: 1px solid var(--border-color); padding: 12px 18px; }
+        .quiz-header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .hdr-brand { font-weight: 700; font-size: 15px; }
+        .hdr-timer { padding: 6px 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 20px; font-family: monospace; font-weight: 700; color: var(--primary); }
+        .hdr-btn { width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
+        .quiz-main { flex: 1; overflow-y: auto; max-width: 900px; width: 100%; margin: 0 auto; padding: 24px 16px; }
+        .q-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); }
+        .q-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .q-num-badge { padding: 5px 12px; background: var(--primary-light); color: var(--primary); border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .lang-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 12px; font-weight: 600; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+        .q-text { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 22px; white-space: pre-line; }
+        .opts { display: flex; flex-direction: column; gap: 11px; }
+        .opt { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 14px; cursor: pointer; transition: all 0.15s ease; }
+        .opt:hover:not(.locked) { border-color: var(--primary); background: #f8fafc; }
+        .opt.selected { border-color: var(--primary); background: var(--primary-light); }
+        .opt.correct { border-color: var(--green); background: var(--green-light); }
+        .opt.wrong { border-color: var(--red); background: var(--red-light); }
+        .opt.locked { cursor: default; }
+        .opt-letter { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+        .opt.selected .opt-letter { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .opt.correct .opt-letter { background: var(--green); color: #fff; border-color: var(--green); }
+        .opt.wrong .opt-letter { background: var(--red); color: #fff; border-color: var(--red); }
+        .opt-text { flex: 1; font-weight: 600; }
+        .opt-tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+        .opt.correct .opt-tag { background: var(--green); color: #fff; }
+        .opt.wrong .opt-tag { background: var(--red); color: #fff; }
+        .sol-box { margin-top: 20px; padding: 16px; background: #f8fafc; border-left: 4px solid var(--primary); border-radius: 12px; }
+        .sol-head { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+        .quiz-nav { flex-shrink: 0; background: #fff; border-top: 1px solid var(--border-color); padding: 12px 18px; }
+        .quiz-nav-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .nav-btn { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+        .nav-btn.prev { background: #fff; border: 1px solid var(--border-color); }
+        .nav-btn.prev:disabled { opacity: 0.4; cursor: not-allowed; }
+        .nav-btn.submit { background: var(--green-light); color: #065f46; border: 1px solid #a7f3d0; }
+        .nav-btn.next { background: var(--primary); color: #fff; }
+        .palette-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; display: none; }
+        .palette-overlay.open { display: block; }
+        .palette-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(340px, 85vw); background: #fff; z-index: 160; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.25s; }
+        .palette-drawer.open { transform: translateX(0); }
+        .pal-head { padding: 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+        .pal-grid { flex: 1; overflow-y: auto; padding: 16px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-content: start; }
+        .pal-btn { aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border-color); background: #f8fafc; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+        .pal-btn.current { outline: 2px solid var(--primary); outline-offset: 2px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 170; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { width: 100%; max-width: 420px; background: #fff; border-radius: 20px; padding: 28px; text-align: center; }
+        .modal-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 22px; }
+        .modal-stat { background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px solid var(--border-color); }
+        .modal-stat-num { font-size: 24px; font-weight: 800; }
+        .modal-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .modal-btn.confirm { background: var(--primary); color: #fff; }
+        .modal-btn.cancel { background: #f1f5f9; }
+        .results-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 180; display: none; overflow-y: auto; padding: 30px 16px 60px; }
+        .results-screen.open { display: block; }
+        .results-box { max-width: 600px; margin: 0 auto; text-align: center; }
+        .res-score-card { background: #0f172a; color: #fff; border-radius: 20px; padding: 28px; margin: 20px 0; }
+        .res-score-val { font-size: 54px; font-weight: 800; }
+        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .res-item { background: #fff; border-radius: 14px; padding: 16px; border: 1px solid var(--border-color); }
+        .res-item-val { font-size: 22px; font-weight: 700; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: #0f172a; color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; transition: all 0.25s; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="startScreen">
+        <div class="start-card">
+            <div class="brand-icon"><i class="fas fa-balance-scale"></i></div>
+            <h1 class="start-title">Fundamental Rights (Part II)</h1>
+            <p class="start-desc">Polity 5.0 — Lecture 7 (Practice & Speed Test)</p>
+            <button class="mode-btn" onclick="startApp('quiz')">
+                <div class="mode-icon quiz"><i class="fas fa-bolt"></i></div>
+                <div><div class="mode-name">Practice Mode</div><div class="mode-info-txt">Har question ke sath instant solution aur explanation.</div></div>
+            </button>
+            <button class="mode-btn" onclick="startApp('test')">
+                <div class="mode-icon test"><i class="fas fa-clock"></i></div>
+                <div><div class="mode-name">Exam Mode</div><div class="mode-info-txt">Bina kisi help ke test dein aur last me score dekhein.</div></div>
+            </button>
+        </div>
+    </div>
+
+    <div class="quiz-app hidden" id="quizApp">
+        <header class="quiz-header">
+            <div class="quiz-header-inner">
+                <button class="hdr-btn" onclick="openPalette()"><i class="fas fa-th-large"></i></button>
+                <div class="hdr-brand">Fundamental Rights Part-II</div>
+                <div class="hdr-timer"><i class="fas fa-stopwatch"></i> <span id="timerText">00:00</span></div>
+            </div>
+        </header>
+
+        <main class="quiz-main" id="quizMain"></main>
+
+        <nav class="quiz-nav" id="quizNav">
+            <div class="quiz-nav-inner">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn submit" onclick="openSubmitModal()"><i class="fas fa-paper-plane"></i> Submit</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()"><span id="nextLabel">Next</span> <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="palette-overlay" id="paletteOverlay" onclick="closePalette()"></div>
+    <aside class="palette-drawer" id="paletteDrawer">
+        <div class="pal-head"><span>Questions</span><button onclick="closePalette()"><i class="fas fa-times"></i></button></div>
+        <div class="pal-grid" id="paletteGrid"></div>
+    </aside>
+
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-box">
+            <h3>Submit Test?</h3>
+            <div class="modal-stats-grid">
+                <div class="modal-stat"><div class="modal-stat-num" id="modalAttempted" style="color:var(--green)">0</div><div>Attempted</div></div>
+                <div class="modal-stat"><div class="modal-stat-num" id="modalUnattempted" style="color:var(--text-muted)">0</div><div>Unattempted</div></div>
+            </div>
+            <button class="modal-btn confirm" onclick="confirmSubmit()">Yes, Finish</button>
+            <button class="modal-btn cancel" onclick="closeSubmitModal()">Resume</button>
+        </div>
+    </div>
+
+    <div class="results-screen" id="resultsScreen"><div class="results-box" id="resultsInner"></div></div>
+    <div class="toast" id="toast"><span id="toastText"></span></div>
+
+    <script>
+        const QUESTIONS = [
+            {
+                e: "What was the Untouchability (Offences) Act, 1955, renamed as in 1976?",
+                h: "1976 में 'अस्पृश्यता (अपराध) अधिनियम, 1955' का नाम बदलकर क्या रखा गया?",
+                oEn: ["Civil Rights Enforcement Act", "Social Justice Act", "Fundamental Rights Protection Act", "Protection of Civil Rights Act, 1955"],
+                oHi: ["नागरिक अधिकार प्रवर्तन अधिनियम", "सामाजिक न्याय अधिनियम", "मौलिक अधिकार संरक्षण अधिनियम", "नागरिक अधिकार संरक्षण अधिनियम, 1955"],
+                a: 3,
+                sE: "The Untouchability (Offences) Act, 1955 was amended in 1976 and renamed as the 'Protection of Civil Rights Act, 1955'.",
+                sH: "1976 में अस्पृश्यता (अपराध) अधिनियम, 1955 में संशोधन करके इसका नाम बदलकर 'नागरिक अधिकार संरक्षण अधिनियम, 1955' कर दिया गया।"
+            },
+            {
+                e: "Which of the following statement regarding the fundamental rights of the Indian constitution is correct?\nI. Article 26 is related Freedom from Taxation for Promotion of a Religion\nII. Article 27 is related to freedom to manage religious affairs.",
+                h: "भारतीय संविधान के मूल अधिकारों के संदर्भ में निम्नलिखित में से कौन सा कथन सही है?\nI. अनुच्छेद 26 किसी धर्म के प्रचार के लिए कराधान से स्वतंत्रता से संबंधित है\nII. अनुच्छेद 27 धार्मिक कार्यों के प्रबंधन की स्वतंत्रता से संबंधित है।",
+                oEn: ["Only I", "Only II", "Both I and II", "Neither I Nor II"],
+                oHi: ["केवल I", "केवल II", "I और II दोनों", "न तो I और न ही II"],
+                a: 3,
+                sE: "Both statements are reversed: Article 26 guarantees freedom to manage religious affairs, while Article 27 guarantees freedom from payment of taxes for promotion of any particular religion.",
+                sH: "दोनों कथन उल्टे दिए गए हैं: अनुच्छेद 26 धार्मिक कार्यों के प्रबंधन से और अनुच्छेद 27 धर्म के प्रचार हेतु कर से मुक्ति से संबंधित है।"
+            },
+            {
+                e: "Right to education was added to our constitution mentioned in which of the following article?",
+                h: "हमारे संविधान में शिक्षा का अधिकार निम्नलिखित में से किस अनुच्छेद में जोड़ा गया है?",
+                oEn: ["Art 51", "Art 51A", "Art 21", "Art 21A"],
+                oHi: ["Art 51", "Art 51A", "Art 21", "Art 21A"],
+                a: 3,
+                sE: "The Right to Education was added to Part III of the Constitution under Article 21A by the 86th Constitutional Amendment Act, 2002.",
+                sH: "86वें संविधान संशोधन अधिनियम (2002) द्वारा अनुच्छेद 21A जोड़कर शिक्षा के अधिकार को मौलिक अधिकार बनाया गया।"
+            },
+            {
+                e: "Right to freedom in our constitution is mentioned in which of the following sets of articles?",
+                h: "हमारे संविधान में स्वतंत्रता का अधिकार निम्नलिखित में से अनुच्छेदों के किस समूह में उल्लिखित है?",
+                oEn: ["Art 5 to 11", "Art 1 to 4", "Art 19 to 22", "Art 36 to 51"],
+                oHi: ["Art 5 to 11", "Art 1 to 4", "Art 19 to 22", "Art 36 to 51"],
+                a: 2,
+                sE: "Articles 19 to 22 cover the Right to Freedom in Part III of the Constitution.",
+                sH: "अनुच्छेद 19 से 22 तक स्वतंत्रता के अधिकार का प्रावधान किया गया है।"
+            },
+            {
+                e: "The Indian Supreme Court's power of judicial review primarily arises from which Article, enabling courts to invalidate laws inconsistent with or violative of Fundamental Rights guaranteed by the Constitution?",
+                h: "भारत के सर्वोच्च न्यायालय की न्यायिक समीक्षा की शक्ति मुख्य रूप से किस अनुच्छेद से उत्पन्न होती है, जो न्यायालयों को संविधान द्वारा गारंटीकृत मौलिक अधिकारों के साथ असंगत या उल्लंघन करने वाले कानूनों को अमान्य करने में सक्षम बनाती है?",
+                oEn: ["Article 12", "Article 13", "Article 15", "Article 17"],
+                oHi: ["अनुच्छेद 12", "अनुच्छेद 13", "अनुच्छेद 15", "अनुच्छेद 17"],
+                a: 1,
+                sE: "Article 13 expressly provides for judicial review, declaring that laws inconsistent with Fundamental Rights are void to the extent of inconsistency.",
+                sH: "अनुच्छेद 13 न्यायिक समीक्षा की शक्ति का आधार है, जिसके तहत मौलिक अधिकारों से असंगत कोई भी कानून शून्य माना जाता है।"
+            },
+            {
+                e: "Article 33 of Part III of the constitution:\n",
+                h: "संविधान के भाग III का अनुच्छेद 33:\n",
+                oEn: [
+                    "Allows Parliament to suspend all Fundamental Rights for the armed forces",
+                    "Empowers Parliament to restrict or Fundamental Rights for armed forces",
+                    "Allows both Parliament and State Legislatures to limit rights of armed forces",
+                    "Allows the President to restrict through an executive"
+                ],
+                oHi: [
+                    "संसद को सशस्त्र बलों के सभी मौलिक अधिकारों को निलंबित करने की अनुमति देता है",
+                    "संसद को सशस्त्र बलों के कुछ मौलिक अधिकारों को प्रतिबंधित या संशोधित करने का अधिकार देता है",
+                    "संसद और राज्य विधानसभाओं दोनों को सशस्त्र बलों के अधिकारों को सीमित करने की अनुमति देता है",
+                    "राष्ट्रपति को कार्यकारी आदेश के माध्यम से अधिकारों को प्रतिबंधित करने की अनुमति देता है"
+                ],
+                a: 1,
+                sE: "Article 33 empowers Parliament exclusively to modify or restrict the application of fundamental rights to armed forces, police forces, and intelligence personnel.",
+                sH: "अनुच्छेद 33 संसद को यह शक्ति देता है कि वह सशस्त्र बलों, पुलिस और खुफिया एजेंसियों के सदस्यों के मौलिक अधिकारों को सीमित या समाप्त कर सके।"
+            },
+            {
+                e: "The writ that examines the legality of a person holding a public office is:",
+                h: "वह रिट जो किसी सार्वजनिक पद पर आसीन व्यक्ति की वैधता की जांच करती है:",
+                oEn: ["Habeas Corpus", "Mandamus", "Certiorari", "Quo Warranto"],
+                oHi: ["हेबियस कॉर्पस", "मैंडमस", "सर्टिओरारी", "कुओ वारंटो"],
+                a: 3,
+                sE: "The writ of Quo-Warranto is issued by the judiciary to prevent unlawful usurpation of a public office by an unauthorized person.",
+                sH: "अधिकार पृच्छा (Quo-Warranto) रिट किसी व्यक्ति द्वारा सार्वजनिक पद पर किए गए दावे की वैधता की जांच करने के लिए जारी की जाती है।"
+            },
+            {
+                e: "Which Article of our constitution was declared as heart and soul by Dr. Ambedkar?",
+                h: "हमारे संविधान के किस अनुच्छेद को Dr. अंबेडकर द्वारा इसकी आत्मा और हृदय घोषित किया गया था?",
+                oEn: ["Art 21", "Art 32", "Art 15", "Art 125"],
+                oHi: ["Art 21", "Art 32", "Art 15", "Art 125"],
+                a: 1,
+                sE: "Dr. B.R. Ambedkar termed Article 32 (Right to Constitutional Remedies) as the very heart and soul of the Constitution.",
+                sH: "डॉ. बी.आर. अंबेडकर ने अनुच्छेद 32 (संवैधानिक उपचारों का अधिकार) को संविधान का हृदय और आत्मा कहा था।"
+            },
+            {
+                e: "What subject matter is addressed under Article 17 of the Indian Constitution?",
+                h: "भारतीय संविधान के अनुच्छेद 17 के तहत किस विषय पर बात की गई है?",
+                oEn: ["Abolition of untouchability", "Abolition of feudal titles", "Right to equality", "Right to freedom"],
+                oHi: ["अस्पृश्यता का उन्मूलन", "सामंती उपाधियों का उन्मूलन", "समानता का अधिकार", "स्वतंत्रता का अधिकार"],
+                a: 0,
+                sE: "Article 17 deals specifically with the abolition of untouchability and forbids its practice in any form.",
+                sH: "अनुच्छेद 17 अस्पृश्यता के उन्मूलन (छुआछूत के अंत) से संबंधित है।"
+            },
+            {
+                e: "The \"Golden Triangle\" in Indian constitutional jurisprudence refers to -",
+                h: "भारतीय संवैधानिक न्यायशास्त्र में \"स्वर्ण त्रिभुज\" से तात्पर्य है -",
+                oEn: ["Articles 14, 19, and 21", "Articles 368, 371, and 372", "Articles 32, 136, and 226", "Articles 280, 281, and 282"],
+                oHi: ["अनुच्छेद 14, 19 और 21", "अनुच्छेद 368, 371 और 372", "अनुच्छेद 32, 136 और 226", "अनुच्छेद 280, 281 और 282"],
+                a: 0,
+                sE: "Articles 14, 19, and 21 together form the 'Golden Triangle' guaranteeing equality, core freedoms, and life/liberty.",
+                sH: "अनुच्छेद 14, 19 और 21 मिलकर भारतीय संविधान का 'स्वर्णिम त्रिभुज' कहलाते हैं।"
+            },
+            {
+                e: "Which of the following constitutional amendments removed the right to property from Part III?",
+                h: "निम्नलिखित में से किस संवैधानिक संशोधन ने भाग III से संपत्ति के अधिकार को हटा दिया?",
+                oEn: ["42nd Amendment", "44th Amendment", "52nd Amendment", "59th Amendment"],
+                oHi: ["42वां संशोधन", "44वां संशोधन", "52वां संशोधन", "59वां संशोधन"],
+                a: 1,
+                sE: "The 44th Constitutional Amendment Act, 1978 removed the Right to Property (Article 31) from Part III and made it a legal right under Article 300A.",
+                sH: "44वें संशोधन (1978) द्वारा संपत्ति के अधिकार को मौलिक अधिकारों से हटाकर अनुच्छेद 300A में विधिक अधिकार बना दिया गया।"
+            },
+            {
+                e: "The right to privacy was recognized in —",
+                h: "निजता के अधिकार को किस मामले में मान्यता दी गई थी —",
+                oEn: ["Minerva Mills v. Union of India", "K.S. Puttaswamy v. Union of India", "ADM Jabalpur v. Shivkant Shukla", "Maneka Gandhi v. Union of India"],
+                oHi: ["मिनर्वा मिल्स बनाम भारत संघ", "के.एस. पुट्टास्वामी बनाम भारत संघ", "एडीएम जबलपुर बनाम शिवकांत शुक्ला", "मेनका गांधी बनाम भारत संघ"],
+                a: 1,
+                sE: "In Justice K.S. Puttaswamy (Retd.) v. Union of India (2017), a 9-judge bench recognized the Right to Privacy as a fundamental right under Article 21.",
+                sH: "के.एस. पुट्टास्वामी बनाम भारत संघ (2017) मामले में सर्वोच्च न्यायालय ने निजता के अधिकार को अनुच्छेद 21 के तहत मौलिक अधिकार माना।"
+            },
+            {
+                e: "Which of the given writs Literally means command, i.e. to command a person to do its duty?",
+                h: "दिए गए रिटों में से किसका शाब्दिक अर्थ 'हम आदेश देते हैं', अर्थात किसी व्यक्ति को उसका कर्तव्य निभाने का आदेश देना?",
+                oEn: ["Prohibition", "Certiorari", "Mandamus", "Quo warranto"],
+                oHi: ["निषेध", "सर्टिओरारी", "परमादेश (Mandamus)", "कुओ वारंटो"],
+                a: 2,
+                sE: "Mandamus literally translates to 'we command'. It directs a public authority or official to execute a mandatory statutory duty.",
+                sH: "परमादेश (Mandamus) का शाब्दिक अर्थ 'हम आदेश देते हैं' होता है, जो सार्वजनिक कर्तव्य के पालन हेतु जारी किया जाता है।"
+            }
+        ];
+
+        const state = {
+            current: 0,
+            answers: new Array(QUESTIONS.length).fill(null),
+            locked: new Array(QUESTIONS.length).fill(false),
+            mode: 'test',
+            lang: 'en',
+            startTime: null,
+            timerInterval: null,
+            elapsed: 0
+        };
+
+        function $(id) { return document.getElementById(id); }
+
+        function toast(msg) {
+            const t = $('toast');$('toastText').textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        }
+
+        function startApp(mode) {
+            state.mode = mode;
+            $('startScreen').classList.add('hidden');$('quizApp').classList.remove('hidden');
+            state.startTime = Date.now();
+            state.timerInterval = setInterval(() => {
+                state.elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                $('timerText').textContent = formatTime(state.elapsed);
+            }, 1000);
+            renderQuestion();
+            buildPalette();
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'hi' : 'en';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const i = state.current;
+            const q = QUESTIONS[i];
+            const isQuiz = state.mode === 'quiz';
+            const locked = state.locked[i];
+            const userAns = state.answers[i];
+            const qTxt = state.lang === 'en' ? q.e : q.h;
+            const opts = state.lang === 'en' ? q.oEn : q.oHi;
+
+            let optsHtml = '';
+            opts.forEach((opt, idx) => {
+                let cls = '', tag = '';
+                if (isQuiz && locked) {
+                    if (idx === q.a) {
+                        cls = 'correct';
+                        tag = '<span class="opt-tag">Correct</span>';
+                    }
+                    if (userAns === idx && idx !== q.a) {
+                        cls = 'wrong';
+                        tag = '<span class="opt-tag">Your Ans</span>';
+                    }
+                } else if (userAns === idx) {
+                    cls = 'selected';
+                }
+                optsHtml += `
+                    <div class="opt ${cls} ${locked ? 'locked' : ''}" onclick="selectOption(${idx})">
+                        <div class="opt-letter">${String.fromCharCode(65 + idx)}</div>
+                        <div class="opt-text">${opt}</div>
+                        ${tag}
+                    </div>
+                `;
+            });
+
+            const solTxt = state.lang === 'en' ? q.sE : q.sH;
+            let solHtml = (isQuiz && locked) ? `
+                <div class="sol-box">
+                    <div class="sol-head"><i class="fas fa-lightbulb"></i> Explanation</div>
+                    <div>${solTxt}</div>
+                </div>
+            ` : '';
+
+            $('quizMain').innerHTML = `
+                <div class="q-card">
+                    <div class="q-top">
+                        <div class="q-num-badge">Question ${i + 1} of ${QUESTIONS.length}</div>
+                        <button class="lang-btn" onclick="toggleLang()">
+                            <i class="fas fa-language"></i> ${state.lang === 'en' ? 'हिन्दी' : 'English'}
+                        </button>
+                    </div>
+                    <div class="q-text">${qTxt}</div>
+                    <div class="opts">${optsHtml}</div>
+                    ${solHtml}
+                </div>
+            `;
+
+            $('prevBtn').disabled = i === 0;
+            $('nextLabel').textContent = i === QUESTIONS.length - 1 ? 'Finish' : 'Next';
+            updatePaletteGrid();
+        }
+
+        function selectOption(idx) {
+            if (state.mode === 'quiz' && state.locked[state.current]) return;
+            state.answers[state.current] = idx;
+            if (state.mode === 'quiz') {
+                state.locked[state.current] = true;
+                if (idx === QUESTIONS[state.current].a) {
+                    toast('Correct! 🎉');
+                } else {
+                    toast('Incorrect');
+                }
+            }
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (state.current > 0) {
+                state.current--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (state.current < QUESTIONS.length - 1) {
+                state.current++;
+                renderQuestion();
+            } else {
+                openSubmitModal();
+            }
+        }
+
+        function buildPalette() {
+            const grid = $('paletteGrid');
+            grid.innerHTML = '';
+            QUESTIONS.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.id = 'pal-' + i;
+                btn.textContent = i + 1;
+                btn.onclick = () => {
+                    state.current = i;
+                    closePalette();
+                    renderQuestion();
+                };
+                grid.appendChild(btn);
+            });
+            updatePaletteGrid();
+        }
+
+        function updatePaletteGrid() {
+            QUESTIONS.forEach((_, i) => {
+                const btn = $('pal-' + i);
+                if (!btn) return;
+                btn.className = 'pal-btn';
+                if (i === state.current) btn.classList.add('current');
+                if (state.answers[i] !== null) btn.classList.add('answered');
+            });
+        }
+
+        function openPalette() {
+            $('paletteDrawer').classList.add('open');$('paletteOverlay').classList.add('open');
+        }
+
+        function closePalette() {
+            $('paletteDrawer').classList.remove('open');$('paletteOverlay').classList.remove('open');
+        }
+
+        function openSubmitModal() {
+            const ans = state.answers.filter(a => a !== null).length;
+            $('modalAttempted').textContent = ans;
+            $('modalUnattempted').textContent = QUESTIONS.length - ans;
+            $('submitModal').classList.add('open');
+        }
+
+        function closeSubmitModal() {
+            $('submitModal').classList.remove('open');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            let correct = 0, wrong = 0;
+            state.answers.forEach((ans, i) => {
+                if (ans !== null) {
+                    if (ans === QUESTIONS[i].a) correct++;
+                    else wrong++;
+                }
+            });
+            $('resultsInner').innerHTML = `
+                <h2>Test Completed!</h2>
+                <p style="color:var(--text-muted);margin:8px 0;">Total Time: ${formatTime(state.elapsed)}</p>
+                <div class="res-score-card">
+                    <div class="res-score-val">${correct} / ${QUESTIONS.length}</div>
+                    <div>Score</div>
+                </div>
+                <div class="res-grid">
+                    <div class="res-item"><div class="res-item-val" style="color:var(--green)">${correct}</div><div>Correct</div></div>
+                    <div class="res-item"><div class="res-item-val" style="color:var(--red)">${wrong}</div><div>Wrong</div></div>
+                </div>
+                <button class="modal-btn confirm" onclick="location.reload()">Re-attempt</button>
+            `;
+            $('resultsScreen').classList.add('open');
+        }
+    </script>
+</body>
+</html>
